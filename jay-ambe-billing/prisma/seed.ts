@@ -11,36 +11,47 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log("🌱 Seeding database...");
 
-  // 1. Create admin user
-  const hashedPassword = await bcrypt.hash("admin123", 12);
+  // 1. Create or update the dealership admin user
+  const hashedPassword = await bcrypt.hash("jayambe123", 12);
   await prisma.user.upsert({
-    where: { username: "admin" },
-    update: {},
-    create: {
-      username: "admin",
+    where: { username: "jayambe" },
+    update: {
       password: hashedPassword,
-      name: "Admin",
+      name: "Jay Ambe",
+      role: "ADMIN",
+    },
+    create: {
+      username: "jayambe",
+      password: hashedPassword,
+      name: "Jay Ambe",
       role: "ADMIN",
     },
   });
-  console.log("✓ Admin user created (username: admin, password: admin123)");
+  await prisma.user.deleteMany({ where: { username: "admin" } });
+  console.log("✓ Admin user ready (username: jayambe)");
 
   // 2. Create vehicle models
   const models = [
     {
       modelName: "Jay Ambe Standard E-Rickshaw",
+      brand: "Jay Ambe",
+      vehicleType: "Passenger E-Rickshaw",
       hsnSacCode: "8703",
       basePrice: 95000,
       gstRate: 5.0,
     },
     {
       modelName: "Jay Ambe Deluxe E-Rickshaw",
+      brand: "Jay Ambe",
+      vehicleType: "Passenger E-Rickshaw",
       hsnSacCode: "8703",
       basePrice: 110000,
       gstRate: 5.0,
     },
     {
       modelName: "Jay Ambe E-Loader (Cargo)",
+      brand: "Jay Ambe",
+      vehicleType: "Loader / Cargo",
       hsnSacCode: "8704",
       basePrice: 105000,
       gstRate: 5.0,
@@ -50,7 +61,10 @@ async function main() {
   for (const model of models) {
     await prisma.vehicleModel.upsert({
       where: { id: models.indexOf(model) + 1 },
-      update: {},
+      update: {
+        brand: model.brand,
+        vehicleType: model.vehicleType,
+      },
       create: model,
     });
   }
@@ -92,7 +106,7 @@ async function main() {
   // 4. Sample vehicles
   await prisma.vehicle.upsert({
     where: { chassisNumber: "JA2026001" },
-    update: {},
+    update: { batteryType: "Lead-Acid" },
     create: {
       modelId: 1,
       chassisNumber: "JA2026001",
@@ -100,6 +114,7 @@ async function main() {
       controllerNumber: "CT2026001",
       color: "Red",
       batteryBrand: "Amara Raja",
+      batteryType: "Lead-Acid",
       batterySerials: JSON.stringify(["AR001", "AR002", "AR003", "AR004"]),
       chargerSerial: "CHG2026001",
       status: "AVAILABLE",
@@ -108,7 +123,7 @@ async function main() {
 
   await prisma.vehicle.upsert({
     where: { chassisNumber: "JA2026002" },
-    update: {},
+    update: { batteryType: "Lead-Acid" },
     create: {
       modelId: 2,
       chassisNumber: "JA2026002",
@@ -116,6 +131,7 @@ async function main() {
       controllerNumber: "CT2026002",
       color: "Blue",
       batteryBrand: "Exide",
+      batteryType: "Lead-Acid",
       batterySerials: JSON.stringify(["EX001", "EX002", "EX003", "EX004"]),
       chargerSerial: "CHG2026002",
       status: "AVAILABLE",

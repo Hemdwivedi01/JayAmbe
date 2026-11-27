@@ -25,6 +25,7 @@ model Customer {
   email       String?
   aadhaarNumber String? @unique
   panNumber   String?
+  gstin       String?
   address     String
   city        String    @default("Mau")
   state       String    @default("Uttar Pradesh")
@@ -36,6 +37,8 @@ model Customer {
 model VehicleModel {
   id          Int       @id @default(autoincrement())
   modelName   String
+  brand       String    @default("Jay Ambe")
+  vehicleType String    @default("Passenger E-Rickshaw")
   hsnSacCode  String    @default("8703")
   basePrice   Float
   gstRate     Float     @default(5.00)
@@ -52,6 +55,7 @@ model Vehicle {
   controllerNumber String?
   color            String
   batteryBrand     String?
+  batteryType      String?
   batterySerials   String       @default("[]") // JSON array stored as string
   chargerSerial    String?
   status           String       @default("AVAILABLE") // AVAILABLE | BOOKED | SOLD | SERVICE

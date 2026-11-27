@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
-import { Sidebar } from "@/components/sidebar";
+import { AppShell } from "@/components/app-shell";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -22,11 +22,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`dark ${outfit.variable}`}>
-      <body className="font-outfit antialiased bg-slate-950 text-slate-50 min-h-screen flex">
-        <Sidebar />
-        <main className="flex-1 ml-64 min-h-screen">
+      <body className="font-outfit antialiased bg-slate-950 text-slate-50 min-h-screen">
+        <AppShell>
           {children}
-        </main>
+        </AppShell>
         <Toaster richColors position="top-right" theme="dark" />
       </body>
     </html>

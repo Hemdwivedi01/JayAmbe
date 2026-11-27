@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, Car, FileText, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { logoutAction } from "@/app/login/actions";
 
 const navItems = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -54,6 +55,14 @@ export function Sidebar() {
             <span className="text-xs text-slate-500">System Administrator</span>
           </div>
         </div>
+        <form action={logoutAction} className="mt-2">
+          <button
+            type="submit"
+            className="w-full rounded-lg px-3 py-2 text-left text-sm text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"
+          >
+            Sign out
+          </button>
+        </form>
       </div>
     </aside>
   );

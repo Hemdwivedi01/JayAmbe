@@ -37,10 +37,8 @@ export function computeGST(params: {
   const isIntraState =
     customerState.trim().toLowerCase() === dealerState.trim().toLowerCase();
 
-  // Taxable amount = Ex-showroom price (GST is on vehicle price only)
-  // RTO, Insurance, Accessories are typically non-GST or separately taxed
-  // For simplicity we apply GST on ex-showroom - discount
-  const taxableAmount = round2(exShowroomPrice - discount);
+  // The entered ex-showroom amount is the pre-tax vehicle price.
+  const taxableAmount = round2(Math.max(0, exShowroomPrice - discount));
 
   const totalGST = round2((taxableAmount * gstRate) / 100);
 

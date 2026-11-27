@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  name      String
+  role      String   @default("STAFF")
+  createdAt DateTime @default(now())
+}
+
+model Customer {
+  id          Int       @id @default(autoincrement())
+  fullName    String
+  phoneNumber String    @unique
+  email       String?
+  aadhaarNumber String? @unique
+  panNumber   String?
+  address     String
+  city        String    @default("Mau")
+  state       String    @default("Uttar Pradesh")
+  pincode     String?
+  createdAt   DateTime  @default(now())
+  invoices    Invoice[]
+}
+
+model VehicleModel {
+  id          Int       @id @default(autoincrement())
+  modelName   String
+  hsnSacCode  String    @default("8703")
+  basePrice   Float
+  gstRate     Float     @default(5.00)
+  createdAt   DateTime  @default(now())
+  vehicles    Vehicle[]
+}
+
+model Vehicle {
+  id               Int          @id @default(autoincrement())
+  modelId          Int
+  model            VehicleModel @relation(fields: [modelId], references: [id])
+  chassisNumber    String       @unique
+  motorNumber      String       @unique
+  controllerNumber String?
+  color            String
+  batteryBrand     String?
+  batterySerials   String       @default("[]") // JSON array stored as string
+  chargerSerial    String?
+  status           String       @default("AVAILABLE") // AVAILABLE | BOOKED | SOLD | SERVICE
+  createdAt        DateTime     @default(now())
+  invoice          Invoice?
+}
+
+model Financer {
+  id            Int       @id @default(autoincrement())
+  financerName  String
+  contactPerson String?
+  phoneNumber   String?
+  invoices      Invoice[]
+}
+
+model Invoice {
+  id            Int      @id @default(autoincrement())
+  invoiceNumber String   @unique
+  invoiceDate   DateTime @default(now())
+
+  customerId    Int
+  customer      Customer @relation(fields: [customerId], references: [id])
+
+  vehicleId     Int      @unique
+  vehicle       Vehicle  @relation(fields: [vehicleId], references: [id])
+
+  // Price Breakdown
+  exShowroomPrice     Float
+  rtoCharges          Float @default(0)
+  insuranceCharges    Float @default(0)
+  accessoriesCharges  Float @default(0)
+  discount            Float @default(0)
+
+  // Tax Calculations
+  taxableAmount Float
+  cgstRate      Float @default(2.50)
+  cgstAmount    Float
+  sgstRate      Float @default(2.50)
+  sgstAmount    Float
+  igstRate      Float @default(0)
+  igstAmount    Float @default(0)
+  grandTotal    Float
+
+  // Payment
+  paymentMode   String  // CASH | UPI | BANK_TRANSFER | FINANCE | HYBRID
+  downPayment   Float   @default(0)
+  financerId    Int?
+  financer      Financer? @relation(fields: [financerId], references: [id])
+  financeAmount Float   @default(0)
+  loanApprovalNo String?
+  paymentStatus String  @default("PAID")
+
+  remarks       String?
+  createdAt     DateTime @default(now())
+}
